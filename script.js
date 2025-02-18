@@ -19,5 +19,25 @@ window.onload = function () {
     option.textContent =`User ${user}`;
     userSelect.appendChild(option);
   });
-  document.querySelector("body").innerText = `There are ${users.length} users`;
+
+function DisplayBookmarks (userId){
+  const bookmarks =GetData(userId) || [];
+  bookmarkList.innerHTML = "";
+  if (bookmarks.length === 0){
+    bookmarkList.textContent = "No bookmarks available";
+    return;
+  }
+bookmarks.reverse().forEach(bookmark =>{// .reverse method allows to see the most recent bookmarks first
+const item = document.createElement ("div");
+
+item.innerHTML = `
+    <p><a href="${bookmark.url}" target="_blank">${bookmark.title}</a></p>
+    <p>${bookmark.description}</p>
+    <p><small>Added on: ${new Date(bookmark.timestamp).toLocaleString()}</small></p>
+    <hr>
+`;
+
+})
+}
+  // document.querySelector("body").innerText = `There are ${users.length} users`;// this shows on the webpage there are 5 users just to check that the html and associated code is working
 };

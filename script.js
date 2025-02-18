@@ -40,3 +40,7 @@ form.innerHTML =`
 body.appendChild(form);
 
 userSelect.addEventListener("change",()=> loadBookmarks(userSelect.value) );// loads bookmarks when user changes
+form.addEventListener("submit",event =>{event.preventDefault();
+  addBookmark(userSelect.value);//the form submission
+  
+})

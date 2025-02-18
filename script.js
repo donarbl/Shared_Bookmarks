@@ -38,3 +38,5 @@ form.innerHTML =`
 <button type = "submit">Add Bookmark</button>
 `;
 body.appendChild(form);
+
+userSelect.addEventListener("change",()=> loadBookmarks(userSelect.value) );// loads bookmarks when user changes

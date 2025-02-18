@@ -7,6 +7,17 @@
 import { getUserIds, getData, setData } from "./storage.js";
 
 window.onload = function () {
-  const users = getUserIds();
+  const users = getUserIds();// fetches user from storage.js dynamically instead of hard code, user1, user2
+  if (users.length === 0){
+    userSelect.innerHTML = `<option disabled chosen>No users available<option>`;
+    return;
+  }
+  // this function is for dropdown so that it is filled with users
+  users.forEach(user =>{
+    let option = document.createElement ("option");
+    option.value =user;
+    option.textContent =`User ${user}`;
+    userSelect.appendChild(option);
+  });
   document.querySelector("body").innerText = `There are ${users.length} users`;
 };

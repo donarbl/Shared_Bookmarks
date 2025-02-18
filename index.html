@@ -1,8 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang ="en">
   <head>
     <script type="module" src="script.js"></script>
+    <title>Bookmarks</title>
   </head>
   <body>
+    <h1>Bookmarks ledger</h1>
+    <label for = "userSelect">Select a user</label> <!--this is created for users selection--> 
+    <select id ="userSelect"></select>
+    <h2>Bookmarks</h2><!--bookmark list-->
+    <div id = "bookmarkList">Choose a user to see bookmarks</div>
+    <h2>Adding a Bookmark </h2>
+    <form id ="bookmarkForm">
+      <label for ="url">URL</label>
+      <input type ="url" id ="url" required>
+      <br>
+      <label for ="title">Title</label>
+      <input type ="text" id ="title" required>
+      <br>
+      <label for ="description">Description</label>
+      <textarea id ="description" required></textarea>
+      <br>
+      <button type ="submit">Add bookmark</button>
+    </form>
   </body>
 </html>

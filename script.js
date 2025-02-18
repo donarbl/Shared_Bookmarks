@@ -6,7 +6,6 @@
 
 import { getUserIds, getData, setData } from "./storage.js";
 
-window.onload = function () {
   const users = getUserIds();// fetches user from storage.js dynamically instead of hard code, user1, user2
   if (users.length === 0){
     userSelect.innerHTML = `<option disabled chosen>No users available<option>`;
@@ -36,8 +35,33 @@ item.innerHTML = `
     <p><small>Added on: ${new Date(bookmark.timestamp).toLocaleString()}</small></p>
     <hr>
 `;
-
-})
+  bookmarkList.appendChild(item);
+});
 }
-  // document.querySelector("body").innerText = `There are ${users.length} users`;// this shows on the webpage there are 5 users just to check that the html and associated code is working
-};
+
+bookmarkForm.addEventListener("submit", (event)=>{
+  event.preventDefault(); // doesn't allow the page reload
+  const userId= userSelect.value;
+  if(!userId) return alert ("Please select a user first ");
+  
+  const url = document.getElementById("url").value;
+  const title = document.getElementById("title").value;
+  const description = document.getElementById("description").value;
+  const timestamp = New Date().toISOString();
+  
+  const NewBookmark = {url, title, description, timestamp};
+
+  const bookmarks = getData(userId) || [];// gets and updates the user's bookmarks
+  bookmarks.push(NewBookmark);
+  setData(userId, bookmarks);
+
+  DisplayBookmarks(userId); // this refreshes display 
+  bookmarkForm.reset(); // this clears the form 
+
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const userSelect = document.getElementById("userSelect");
+    const bookmarkList = document.getElementById("bookmarkList");
+    const bookmarkForm = document.getElementById("bookmarkForm");
+});

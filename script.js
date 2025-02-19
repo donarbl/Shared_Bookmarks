@@ -1,23 +1,30 @@
 // Import the storage functions from storage.js
 import { getUserIds, getData, setData } from "./storage.js";
 
-// 1. Setup the user dropdown dynamically
-window.onload = function () {
-  const users = getUserIds();
-  const body = document.querySelector("body");
+const BookmarkManager ={
+  currentUserId:null, 
 
-  // Create user selection dropdown
+  start (){
+    this.createUserDropdown();
+    this.createBookmarkForm();
+    this.setupEventListener();
+  },
+createUserDropdown(){
+  const users = getUserIds();
   const userSelect = document.createElement("select");
-  userSelect.id = "userDropdown";
-  
+  userSelect.id = "userSelect";
+  select.innerHTML ='<option value ="">Select a user<?/option>';
   users.forEach(userId => {
     const option = document.createElement("option");
     option.value = userId;
     option.innerText = `User ${userId}`;
     userSelect.appendChild(option);
   });
+  document.body.appendChild(select);
+}
   
-  body.appendChild(userSelect);
+  
+  
   
   // Create a container to display bookmarks
   const bookmarkList = document.createElement("div");
@@ -25,15 +32,17 @@ window.onload = function () {
   body.appendChild(bookmarkList);
   
   // Create a form to add bookmarks
+  createBookmarkForm (){
   const form = document.createElement("form");
   form.id = "bookmarkForm";
   form.innerHTML = `
-    <input type="text" id="bookmarkUrl" placeholder="Bookmark URL" required />
-    <input type="text" id="bookmarkTitle" placeholder="Title" required />
-    <textarea id="bookmarkDescription" placeholder="Description" required></textarea>
+    <input type="url" id="urlInput" placeholder=enter URL" required>
+    <input type="text" id="titleInput" placeholder="enter Title" required>
+    <textarea id="descriptionInput" placeholder="enter Description" required></textarea>
     <button type="submit">Add Bookmark</button>
   `;
-  body.appendChild(form);
+  document.body.appendChild(form);
+  },
 
   // Load bookmarks when user changes
   userSelect.addEventListener("change", () => loadBookmarks(userSelect.value));
@@ -44,7 +53,7 @@ window.onload = function () {
     addBookmark(userSelect.value);
   });
   
-  // Load bookmarks for the first user on page load
+  // // Load bookmarks for the first user on page load
   loadBookmarks(userSelect.value);
 };
 

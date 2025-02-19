@@ -1,115 +1,123 @@
-// Import the storage functions from storage.js
 import { getUserIds, getData, setData } from "./storage.js";
 
-const BookmarkManager ={
-  currentUserId:null, 
+window.onload = init;
+let currentUserId = null;
 
-  start (){
-    this.createUserDropdown();
-    this.createBookmarkForm();
-    this.setupEventListener();
-  },
-createUserDropdown(){
-  const users = getUserIds();
-  const userSelect = document.createElement("select");
-  userSelect.id = "userSelect";
-  select.innerHTML ='<option value ="">Select a user<?/option>';
-  users.forEach(userId => {
-    const option = document.createElement("option");
-    option.value = userId;
-    option.innerText = `User ${userId}`;
-    userSelect.appendChild(option);
-  });
-  document.body.appendChild(select);
+function init() {
+    createUserDropdown();
+    createBookmarkForm();
+    document.getElementById('userSelect').addEventListener('change', handleUserChange);
+    document.getElementById('bookmarkForm').addEventListener('submit', handleBookmarkSubmit);
 }
-  
-  
-  
-  
-  // Create a container to display bookmarks
-  const bookmarkList = document.createElement("div");
-  bookmarkList.id = "bookmarkList";
-  body.appendChild(bookmarkList);
-  
-  // Create a form to add bookmarks
-  createBookmarkForm (){
-  const form = document.createElement("form");
-  form.id = "bookmarkForm";
-  form.innerHTML = `
-    <input type="url" id="urlInput" placeholder=enter URL" required>
-    <input type="text" id="titleInput" placeholder="enter Title" required>
-    <textarea id="descriptionInput" placeholder="enter Description" required></textarea>
-    <button type="submit">Add Bookmark</button>
-  `;
-  document.body.appendChild(form);
-  },
 
-  // Load bookmarks when user changes
-  userSelect.addEventListener("change", () => loadBookmarks(userSelect.value));
-  
-  // Handle form submission
-  form.addEventListener("submit", event => {
-    event.preventDefault();
-    addBookmark(userSelect.value);
-  });
-  
-  // // Load bookmarks for the first user on page load
-  loadBookmarks(userSelect.value);
-};
+function createUserDropdown() {
+    const users = getUserIds();
+    const select = document.createElement('select');
+    select.id = 'userSelect';
+    select.innerHTML = '<option value="">Select a user</option>';
+    users.forEach(userId => {
+        const option = document.createElement('option');
+        option.value = userId;
+        option.textContent = `User ${userId}`;
+        select.appendChild(option);
+    });
+    document.body.appendChild(select);
+    
+    const container = document.createElement('div');// div for a nicer rendering on the browser
+    container.appendChild(document.createElement('br'));// spacing of the select dropdown with the rest
+    document.body.appendChild(container);
+}
 
-// 2. Load and display bookmarks
-function loadBookmarks(userId) {
-  const bookmarkList = document.getElementById("bookmarkList");
-  bookmarkList.innerHTML = ""; // Clear previous bookmarks
-
-  const bookmarks = getData(userId) || [];
-  
-  if (bookmarks.length === 0) {
-    bookmarkList.innerText = "No bookmarks available.";
-    return;
-  }
-
-  // Sort bookmarks in reverse chronological order
-  bookmarks.sort((a, b) => b.timestamp - a.timestamp);
-
-  bookmarks.forEach(bookmark => {
-    const bookmarkItem = document.createElement("div");
-    bookmarkItem.innerHTML = `
-      <p><a href="${bookmark.url}" target="_blank">${bookmark.title}</a></p>
-      <p>${bookmark.description}</p>
-      <p><small>Created at: ${new Date(bookmark.timestamp).toLocaleString()}</small></p>
-      <hr>
+function createBookmarkForm() {
+    const formContainer = document.createElement('div')// made a container div
+    const form = document.createElement('form');
+    form.id = 'bookmarkForm';
+    form.innerHTML = `
+      <label for ="urlInput">Enter URL</label><br>
+      <input type="url" id="urlInput" placeholder="Enter URL" required><br><br>
+      <label for ="titleInput">Enter Title</label><br>
+        <input type="text" id="titleInput" placeholder="Enter title" required><br><br>
+        <label for="descriptionInput">Enter description:</label><br>
+        <textarea type="text" id="descriptionInput" placeholder="Enter description" required></textarea><br><br>
+        <button type="submit">Add Bookmark</button>
     `;
-    bookmarkList.appendChild(bookmarkItem);
-  });
+    document.body.appendChild(form);
 }
 
-// 3. Add a new bookmark
-function addBookmark(userId) {
-  const url = document.getElementById("bookmarkUrl").value;
-  const title = document.getElementById("bookmarkTitle").value;
-  const description = document.getElementById("bookmarkDescription").value;
-
-  if (!url || !title || !description) {
-    alert("All fields are required!");
-    return;
-  }
-
-  const newBookmark = {
-    url,
-    title,
-    description,
-    timestamp: Date.now(),
-  };
-
-  // Get existing bookmarks, update and save them
-  const bookmarks = getData(userId) || [];
-  bookmarks.push(newBookmark);
-  setData(userId, bookmarks);
-
-  // Refresh the displayed bookmarks
-  loadBookmarks(userId);
-
-  // Clear the form inputs
-  document.getElementById("bookmarkForm").reset();
+function handleUserChange(event) {
+    currentUserId = event.target.value;
+    if (currentUserId) {
+        displayBookmarks(currentUserId);
+    } else {
+        clearBookmarkDisplay();
+    }
 }
+
+function displayBookmarks(userId) {
+    const bookmarks = getData(userId) || [];
+    const bookmarkList = document.getElementById('bookmarkList') || document.createElement('div');
+    bookmarkList.id = 'bookmarkList';
+    bookmarkList.innerHTML = '';
+
+    if (bookmarks.length === 0) {
+        bookmarkList.textContent = 'No bookmarks for this user.';
+    } else {
+        bookmarks.sort((a, b) => b.createdAt - a.createdAt).forEach((bookmark, index) => {
+            const bookmarkElement = createBookmarkElement(bookmark, index);
+            bookmarkList.appendChild(bookmarkElement);
+        });
+    }
+
+    if (!document.getElementById('bookmarkList')) {
+        document.body.appendChild(bookmarkList);
+    }
+}
+
+function createBookmarkElement(bookmark, index) {
+    const div = document.createElement('div');
+    div.innerHTML = `
+        <h3><a href="${bookmark.url}" target="_blank">${bookmark.title}</a></h3>
+        <p>${bookmark.description}</p>
+        <p>Created: ${new Date(bookmark.createdAt).toLocaleString()}</p>
+        <button class="deleteBtn" data-index="${index}">Delete</button>
+    `;
+    div.querySelector('.deleteBtn').addEventListener('click', () => deleteBookmark(index));
+    return div;
+}
+
+function handleBookmarkSubmit(event) {
+    event.preventDefault();
+    if (!currentUserId) {
+        alert('Please select a user first.');
+        return;
+    }
+
+    const newBookmark = {
+        url: document.getElementById('urlInput').value,
+        title: document.getElementById('titleInput').value,
+        description: document.getElementById('descriptionInput').value,
+        createdAt: Date.now()
+    };
+
+    const bookmarks = getData(currentUserId) || [];
+    bookmarks.push(newBookmark);
+    setData(currentUserId, bookmarks);
+    displayBookmarks(currentUserId);
+    event.target.reset();
+}
+
+function deleteBookmark(index) {
+    const bookmarks = getData(currentUserId) || [];
+    bookmarks.splice(index, 1);
+    setData(currentUserId, bookmarks);
+    displayBookmarks(currentUserId);
+}
+
+function clearBookmarkDisplay() {
+    const bookmarkList = document.getElementById('bookmarkList');
+    if (bookmarkList) {
+        bookmarkList.innerHTML = '';
+    }
+}
+
+

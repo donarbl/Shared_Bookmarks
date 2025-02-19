@@ -1,9 +1,9 @@
 import { getUserIds, getData, setData } from "./storage.js";
 
-window.onload = init;
+window.onload = start;
 let currentUserId = null;
 
-function init() {
+function start() {
     createUserDropdown();
     createBookmarkForm();
     document.getElementById('userSelect').addEventListener('change', handleUserChange);
@@ -113,11 +113,6 @@ function deleteBookmark(index) {
     displayBookmarks(currentUserId);
 }
 
-function clearBookmarkDisplay() {
-    const bookmarkList = document.getElementById('bookmarkList');
-    if (bookmarkList) {
-        bookmarkList.innerHTML = '';
-    }
-}
+
 
 

@@ -113,6 +113,7 @@ function deleteBookmark(index) {
     displayBookmarks(currentUserId);
 }
 
+export {handleBookmarkSubmit};
 
 
 

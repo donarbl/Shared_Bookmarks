@@ -113,7 +113,8 @@ function deleteBookmark(index) {
     displayBookmarks(currentUserId);
 }
 
-export {handleBookmarkSubmit};
+export { createUserDropdown, createBookmarkForm, handleUserChange };
+
 
 
 

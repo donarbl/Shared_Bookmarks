@@ -12,6 +12,10 @@ function start() {
 
 function createUserDropdown() {
     const users = getUserIds();
+    const label = document.createElement("label");
+    label.setAttribute("for", "userSelect"); // Associated label with the selected element
+    label.textContent = "Select a user:"; // Labeling the text
+    document.body.appendChild(label);
     const select = document.createElement('select');
     select.id = 'userSelect';
     select.innerHTML = '<option value="">Select a user</option>';
